@@ -16,13 +16,25 @@ Dieses Projekt sammelt automatisiert Luftqualitätsdaten über die Air-Quality-A
 - Datenzyklen und Visualisierung zeitlich synchronisieren  
 
 ## Benutzte Ressourcen
-- Air-Quality-API  
-- PHP (PDO), MariaDB  
-- Chart.js  
-- TailwindCSS  
-- Figma-Prototyp  
-- FHGR ETL-Unterlagen  
-- GitHub-Repositories aus dem Unterricht  
+### Ressourcen für Recherche, Planung und Coding
+(Werkzeuge und Quellen, die wir zur Unterstützung genutzt haben)
+
+- Moodle-Unterlagen des Moduls (inkl. FHGR-Beispiele und Erklärungen)  
+- ChatGPT  
+- Google Gemini  
+- Perplexity  
+- Einfache SQL-Referenzen und Hilfeseiten  
+- Dokumentationen zu PHP, JavaScript und ETL-Grundlagen  
+
+### Externe Ressourcen in der Webseite
+(Tools und Datenquellen, die im Projekt direkt eingebunden sind)
+
+- Open-Meteo API (Luftqualitätsdaten)  
+- Leaflet.js (Kartenanzeige)  
+- Chart.js (Verlaufsgrafik)  
+- Google Fonts (Inter-Schrift)  
+- Tailwind CSS CDN (Layout und Styling) 
+
 
 ## Projektlinks  
 **Projektname:**  
@@ -32,7 +44,7 @@ NAIMOSPHERE
 - Ali Tas (ali.tas@stud.fhgr.ch)  
 - Naim El Amri Fernandez (naim.elamrifernandez@stud.fhgr.ch)
 
-**API-URLs:**  
+**API-URL:**  
 - https://open-meteo.com/en/docs/air-quality-api?ref=freepublicapis.com
 
 **Figma-URL:**  
