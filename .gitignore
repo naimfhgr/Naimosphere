@@ -1,0 +1,9 @@
+# Geheime Konfigurationen ignorieren
+config.local.php
+.env
+
+# Systemdateien ignorieren
+.DS_Store
+
+# VS Code Einstellungen ignorieren (optional, aber empfohlen)
+.vscode/

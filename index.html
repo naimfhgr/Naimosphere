@@ -1,521 +1,521 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NAIMOSPHERE</title>
-    
-    <!-- Favicon: Branding -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2%22/><path d=%22M9.6 4.6A2 2 0 1 1 11 8H2%22/><path d=%22M12.6 19.4A2 2 0 1 0 14 16H2%22/></svg>" type="image/svg+xml">
 
-    <!-- Externe Bibliotheken -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2%22/><path d=%22M9.6 4.6A2 2 0 1 1 11 8H2%22/><path d=%22M12.6 19.4A2 2 0 1 0 14 16H2%22/></svg>"
+      type="image/svg+xml"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Konfiguration Design-System -->
     <script>
       tailwind.config = {
         theme: {
           extend: {
-            fontFamily: { sans: ['Inter', 'sans-serif'] },
-            colors: { brand: { green: '#10B981', orange: '#F59E0B', red: '#EF4444' } },
+            fontFamily: { sans: ["Inter", "sans-serif"] },
+            colors: {
+              brand: { green: "#10B981", orange: "#F59E0B", red: "#EF4444" },
+            },
             boxShadow: {
-              'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
-              'card-hover': '0 0 0 1px rgba(0,0,0,0.03), 0 8px 16px rgba(0,0,0,0.08)',
-              'dropdown': '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
+              soft: "0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)",
+              "card-hover":
+                "0 0 0 1px rgba(0,0,0,0.03), 0 8px 16px rgba(0,0,0,0.08)",
+              dropdown: "0 10px 30px -5px rgba(0, 0, 0, 0.2)",
             },
             animation: {
-              'ocean-shimmer': 'ocean-shimmer 8s ease-in-out infinite',
-              'fade-in': 'fadeIn 0.6s ease-out forwards',
-              'slide-down': 'slideDown 0.2s ease-out forwards',
-              'ping-slow': 'ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite', // Radar
+              "ocean-shimmer": "ocean-shimmer 8s ease-in-out infinite",
+              "fade-in": "fadeIn 0.6s ease-out forwards",
+              "slide-down": "slideDown 0.2s ease-out forwards",
+              "ping-slow": "ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite",
             },
             keyframes: {
-              'ocean-shimmer': { '0%, 100%': { backgroundPosition: '0% 50%' }, '50%': { backgroundPosition: '100% 50%' } },
-              fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-              slideDown: { '0%': { opacity: '0', transform: 'translateY(-10px) scale(0.95)' }, '100%': { opacity: '1', transform: 'translateY(0) scale(1)' } }
-            }
-          }
-        }
-      }
+              "ocean-shimmer": {
+                "0%, 100%": { backgroundPosition: "0% 50%" },
+                "50%": { backgroundPosition: "100% 50%" },
+              },
+              fadeIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              slideDown: {
+                "0%": {
+                  opacity: "0",
+                  transform: "translateY(-10px) scale(0.95)",
+                },
+                "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+              },
+            },
+          },
+        },
+      };
     </script>
 
-    <style>
-        /* Reset & Overrides */
-        html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        
-        .leaflet-container { background: #F9FAFB; font-family: 'Inter', sans-serif; border-radius: 0.5rem; }
-        .map-tiles-grayscale { filter: grayscale(100%); }
-        .leaflet-control-attribution { display: none; }
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-        /* Custom Tooltip Style */
-        .custom-tooltip {
-            background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-radius: 4px;
-            padding: 4px 8px; font-weight: 600; font-size: 12px; color: #374151;
-        }
-        .leaflet-tooltip-top:before { border-top-color: rgba(255, 255, 255, 0.95); }
+  <body
+    class="bg-zinc-600 text-gray-600 font-sans antialiased selection:bg-blue-500 selection:text-white min-h-screen py-0 md:py-10 flex justify-center items-start"
+  >
+    <div
+      class="w-full max-w-[1024px] bg-slate-900 shadow-2xl md:rounded-xl overflow-visible flex flex-col relative min-h-[800px]"
+    >
+      <header
+        class="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 bg-[length:200%_200%] animate-ocean-shimmer text-white pt-12 pb-16 px-6 relative z-20 shadow-lg md:rounded-t-xl -mb-px"
+      >
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
+          <div class="flex items-center gap-3 mb-6 animate-fade-in">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-white"
+            >
+              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" />
+              <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
+              <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
+            </svg>
+            <h1
+              class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-sm"
+            >
+              NAIMOSPHERE
+            </h1>
+          </div>
 
-        /* Scrollbar Utilities */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+          <p
+            class="text-lg md:text-xl font-medium max-w-2xl text-blue-50 mb-10 leading-relaxed tracking-wide drop-shadow-sm opacity-95 animate-fade-in"
+            style="animation-delay: 0.1s"
+          >
+            Wie gut ist die Luft in deiner Nähe – und was bedeutet das für dich?
+          </p>
 
-        .bg-ocean-shimmer {
-            background-image: linear-gradient(to bottom right, #0f172a, #1e3a8a, #2563eb);
-            background-size: 200% 200%;
-            animation: ocean-shimmer 8s ease-in-out infinite;
-        }
-        @keyframes wind-puff {
-            0% { transform: translateY(0) scale(0.6); opacity: 0; }
-            20% { opacity: 0.5; transform: translateY(-8px) scale(1.2); } 
-            100% { transform: translateY(-25px) scale(2.2); opacity: 0; }
-        }
-        @keyframes emitter-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
-</head>
+          <div
+            class="relative w-64 md:w-72 animate-fade-in z-50 inline-block"
+            style="animation-delay: 0.2s"
+            id="custom-dropdown-container"
+          >
+            <div
+              class="absolute inset-0 bg-white/20 rounded-lg blur opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            ></div>
 
-<body class="bg-zinc-600 text-gray-600 font-sans antialiased selection:bg-blue-500 selection:text-white min-h-screen py-0 md:py-10 flex justify-center items-start">
+            <button
+              id="dropdown-trigger"
+              class="relative w-full appearance-none bg-white/10 backdrop-blur-md border border-white/20 text-white px-7 py-3.5 rounded-lg font-semibold shadow-lg shadow-black/10 hover:shadow-xl hover:scale-105 transition-all duration-300 ease-out text-sm tracking-wide flex items-center justify-between group text-left"
+            >
+              <span id="selected-city-text">Standort auswählen</span>
+              <div
+                class="pointer-events-none flex items-center text-blue-200 group-hover:text-white transition-colors"
+              >
+                <svg
+                  id="dropdown-arrow"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="transition-transform duration-300"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </div>
+            </button>
 
-    <!-- App Wrapper -->
-    <div class="w-full max-w-[1024px] bg-slate-900 shadow-2xl md:rounded-xl overflow-visible flex flex-col relative min-h-[800px]">
+            <div
+              id="dropdown-options"
+              class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl rounded-lg shadow-dropdown border border-gray-100 overflow-hidden hidden origin-top z-50 animate-slide-down text-left"
+            >
+              <ul
+                class="max-h-60 overflow-y-auto custom-scrollbar py-2"
+                id="city-list"
+              ></ul>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <!-- Header (-mb-px fix for gap) -->
-        <header class="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 bg-[length:200%_200%] animate-ocean-shimmer text-white pt-12 pb-16 px-6 relative z-20 shadow-lg md:rounded-t-xl -mb-px">
-            <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
-                
-                <div class="flex items-center gap-3 mb-6 animate-fade-in">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white">
-                        <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
-                    </svg>
-                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-sm">NAIMOSPHERE</h1>
-                </div>
-                
-                <p class="text-lg md:text-xl font-medium max-w-2xl text-blue-50 mb-10 leading-relaxed tracking-wide drop-shadow-sm opacity-95 animate-fade-in" style="animation-delay: 0.1s;">
-                    Wie gut ist die Luft in deiner Nähe – und was bedeutet das für dich?
-                </p>
-                
-                <!-- Glass Custom Dropdown -->
-                <div class="relative w-64 md:w-72 animate-fade-in z-50 inline-block" style="animation-delay: 0.2s;" id="custom-dropdown-container">
-                    <div class="absolute inset-0 bg-white/20 rounded-lg blur opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                    
-                    <button id="dropdown-trigger" class="relative w-full appearance-none bg-white/10 backdrop-blur-md border border-white/20 text-white px-7 py-3.5 rounded-lg font-semibold shadow-lg shadow-black/10 hover:shadow-xl hover:scale-105 transition-all duration-300 ease-out text-sm tracking-wide flex items-center justify-between group text-left">
-                        <span id="selected-city-text">Standort auswählen</span>
-                        <div class="pointer-events-none flex items-center text-blue-200 group-hover:text-white transition-colors">
-                            <svg id="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300"><path d="m6 9 6 6 6-6"/></svg>
-                        </div>
-                    </button>
+      <div
+        id="empty-state"
+        class="w-full flex-grow bg-gray-50 flex flex-col items-center justify-center p-12 animate-fade-in relative z-10"
+        style="animation-delay: 0.3s"
+      >
+        <div class="relative flex items-center justify-center w-40 h-40 mb-8">
+          <span
+            class="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-20 animate-ping-slow"
+          ></span>
+          <span
+            class="absolute inline-flex h-24 w-24 rounded-full bg-blue-500 opacity-10 animate-ping-slow"
+            style="animation-delay: 0.3s"
+          ></span>
+          <span
+            class="relative inline-flex rounded-full h-4 w-4 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.8)]"
+          ></span>
+        </div>
+        <h3 class="text-gray-900 font-semibold text-lg mb-2 tracking-tight">
+          System Bereit
+        </h3>
+        <p
+          class="text-gray-400 text-xs font-medium uppercase tracking-widest text-center opacity-60"
+        >
+          Warte auf Standortwahl
+        </p>
+      </div>
 
-                    <div id="dropdown-options" class="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl rounded-lg shadow-dropdown border border-gray-100 overflow-hidden hidden origin-top z-50 animate-slide-down text-left">
-                        <ul class="max-h-60 overflow-y-auto custom-scrollbar py-2" id="city-list"></ul>
+      <main
+        id="dashboard-content"
+        class="w-full flex-grow bg-gray-50 hidden relative z-10"
+      >
+        <section class="w-full pt-16">
+          <div class="w-full px-6 md:px-12">
+            <h2
+              class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1"
+            >
+              Luftqualität & Empfehlungen
+            </h2>
+
+            <div class="w-full">
+              <div
+                class="bg-white rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 p-8 md:p-10 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transform hover:-translate-y-1 group"
+              >
+                <div
+                  class="flex flex-col md:flex-row items-center gap-6 md:gap-10"
+                >
+                  <div
+                    id="status-indicator-bar"
+                    class="h-20 w-1.5 bg-gray-200 rounded-full hidden md:block opacity-80 transition-colors duration-500"
+                  ></div>
+                  <div class="text-center md:text-left">
+                    <h3
+                      class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2"
+                    >
+                      Luftqualität Aktuell
+                    </h3>
+                    <div
+                      id="current-level"
+                      class="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight transition-colors duration-500"
+                    >
+                      --
                     </div>
+                  </div>
                 </div>
-            </div>
-        </header>
+                <div
+                  class="flex items-center gap-6 w-full md:w-auto justify-center bg-gray-50 px-8 py-4 rounded-md border border-gray-100"
+                >
+                  <div class="flex items-baseline gap-1.5">
+                    <span
+                      id="current-aqi"
+                      class="text-5xl font-bold text-gray-900 tracking-tighter"
+                      >--</span
+                    >
+                    <span class="text-xs text-gray-400 font-semibold uppercase"
+                      >AQI</span
+                    >
+                  </div>
+                  <div
+                    class="w-32 h-2.5 bg-gray-200 rounded-full overflow-hidden"
+                  >
+                    <div
+                      id="aqi-bar"
+                      class="w-[0%] h-full bg-gray-400 rounded-full transition-all duration-1000"
+                    ></div>
+                  </div>
+                </div>
+              </div>
 
-        <!-- Idle State: Radar Pulse -->
-        <div id="empty-state" class="w-full flex-grow bg-gray-50 flex flex-col items-center justify-center p-12 animate-fade-in relative z-10" style="animation-delay: 0.3s;">
-            <div class="relative flex items-center justify-center w-40 h-40 mb-8">
-                <span class="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-20 animate-ping-slow"></span>
-                <span class="absolute inline-flex h-24 w-24 rounded-full bg-blue-500 opacity-10 animate-ping-slow" style="animation-delay: 0.3s;"></span>
-                <span class="relative inline-flex rounded-full h-4 w-4 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.8)]"></span>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div
+                  class="bg-white rounded-lg p-8 shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 flex flex-col items-center text-center h-full relative overflow-hidden group hover:-translate-y-1"
+                >
+                  <div class="absolute top-0 w-full h-1.5 bg-gray-400"></div>
+                  <h3
+                    class="text-lg font-bold text-gray-800 mb-6 tracking-tight"
+                  >
+                    Pollenbelastung
+                  </h3>
+                  <div class="mb-8 flex-grow w-full">
+                    <span
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3"
+                      >Empfehlung</span
+                    >
+                    <div
+                      class="text-sm text-gray-600 leading-relaxed font-medium"
+                    >
+                      <span
+                        id="pollen-value"
+                        class="block text-gray-900 font-bold mb-2 text-base"
+                        >--</span
+                      >
+                      Belastung prüfen.
+                    </div>
+                  </div>
+                  <div class="mt-auto">
+                    <a
+                      href="#"
+                      class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300"
+                    >
+                      Mehr Infos
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg p-8 shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 flex flex-col items-center text-center h-full relative overflow-hidden group hover:-translate-y-1"
+                >
+                  <div
+                    class="absolute top-0 w-full h-1.5 bg-purple-400/80"
+                  ></div>
+                  <h3
+                    class="text-lg font-bold text-gray-800 mb-6 tracking-tight"
+                  >
+                    Sensible Gruppen
+                  </h3>
+                  <div class="mb-8 flex-grow w-full">
+                    <span
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3"
+                      >Empfehlung</span
+                    >
+                    <div
+                      class="text-sm text-gray-600 leading-relaxed font-medium"
+                    >
+                      <span class="block text-gray-900 font-bold mb-2 text-base"
+                        >Allgemein OK</span
+                      >
+                      Aktivitäten unbedenklich.
+                    </div>
+                  </div>
+                  <div class="mt-auto">
+                    <a
+                      href="#"
+                      class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300"
+                    >
+                      Mehr Infos
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-white rounded-lg p-8 shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 flex flex-col items-center text-center h-full relative overflow-hidden group hover:-translate-y-1"
+                >
+                  <div class="absolute top-0 w-full h-1.5 bg-blue-400/80"></div>
+                  <h3
+                    class="text-lg font-bold text-gray-800 mb-6 tracking-tight"
+                  >
+                    Aktivitäten
+                  </h3>
+                  <div class="mb-8 flex-grow w-full">
+                    <span
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3"
+                      >Empfehlung</span
+                    >
+                    <div
+                      class="text-sm text-gray-600 leading-relaxed font-medium"
+                    ></div>
+                  </div>
+                  <div class="mt-auto">
+                    <a
+                      href="#"
+                      class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300"
+                    >
+                      Mehr Infos
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"
+                      >
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 class="text-gray-900 font-semibold text-lg mb-2 tracking-tight">System Bereit</h3>
-            <p class="text-gray-400 text-xs font-medium uppercase tracking-widest text-center opacity-60">
-                Warte auf Standortwahl
-            </p>
+          </div>
+        </section>
+
+        <div
+          class="relative w-full px-6 md:px-12 my-24 h-[1px] rounded-none overflow-hidden"
+        >
+          <div class="absolute inset-0 bg-ocean-shimmer opacity-70"></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50"
+          ></div>
         </div>
 
-        <!-- Dashboard (Hidden initially) -->
-        <main id="dashboard-content" class="w-full flex-grow bg-gray-50 hidden relative z-10">
-            <section class="w-full pt-16">
-                <div class="w-full px-6 md:px-12">
-                    <h2 class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1">Luftqualität & Empfehlungen</h2>
-
-                    <div class="w-full">
-                        <!-- Main KPI -->
-                        <div class="bg-white rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 p-8 md:p-10 mb-8 flex flex-col md:flex-row items-center justify-between gap-8 transform hover:-translate-y-1 group">
-                            <div class="flex flex-col md:flex-row items-center gap-6 md:gap-10">
-                                <div class="h-20 w-1.5 bg-brand-green rounded-full hidden md:block opacity-80"></div>
-                                <div class="text-center md:text-left">
-                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Luftqualität Aktuell</h3>
-                                    <div id="current-level" class="text-4xl md:text-5xl font-bold text-brand-green tracking-tight">Lädt...</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-6 w-full md:w-auto justify-center bg-gray-50 px-8 py-4 rounded-md border border-gray-100">
-                                 <div class="flex items-baseline gap-1.5">
-                                    <span id="current-aqi" class="text-5xl font-bold text-gray-900 tracking-tighter">--</span>
-                                    <span class="text-xs text-gray-400 font-semibold uppercase">AQI</span>
-                                 </div>
-                                 <div class="w-32 h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                                    <div id="aqi-bar" class="w-[0%] h-full bg-brand-green rounded-full shadow-[0_0_10px_rgba(16,185,129,0.4)] transition-all duration-1000"></div>
-                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Cards Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                            <!-- UV Index -->
-                            <div class="bg-white rounded-lg p-8 shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 flex flex-col items-center text-center h-full relative overflow-hidden group hover:-translate-y-1">
-                                <div class="absolute top-0 w-full h-1.5 bg-brand-orange/80"></div>
-                                <h3 class="text-lg font-bold text-gray-800 mb-6 tracking-tight">UV-Index</h3>
-                                <div class="mb-8 flex-grow w-full">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3">Empfehlung</span>
-                                    <div class="text-sm text-gray-600 leading-relaxed font-medium">
-                                        <span id="uv-value" class="block text-gray-900 font-bold mb-2 text-base">--</span>
-                                        Sonnenschutz optional.
-                                    </div>
-                                </div>
-                                <div class="mt-auto">
-                                    <a href="#" class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300">
-                                        Mehr Infos
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Sensible Gruppen -->
-                            <div class="bg-white rounded-lg p-8 shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 flex flex-col items-center text-center h-full relative overflow-hidden group hover:-translate-y-1">
-                                <div class="absolute top-0 w-full h-1.5 bg-purple-400/80"></div>
-                                <h3 class="text-lg font-bold text-gray-800 mb-6 tracking-tight">Sensible Gruppen</h3>
-                                <div class="mb-8 flex-grow w-full">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3">Empfehlung</span>
-                                    <div class="text-sm text-gray-600 leading-relaxed font-medium">
-                                        <span class="block text-gray-900 font-bold mb-2 text-base">Alles OK</span>
-                                        Aktivitäten unbedenklich.
-                                    </div>
-                                </div>
-                                <div class="mt-auto">
-                                    <a href="#" class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300">
-                                        Mehr Infos
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Aktivitäten -->
-                            <div class="bg-white rounded-lg p-8 shadow-soft hover:shadow-card-hover transition-all duration-300 ease-out border border-gray-200/60 flex flex-col items-center text-center h-full relative overflow-hidden group hover:-translate-y-1">
-                                <div class="absolute top-0 w-full h-1.5 bg-blue-400/80"></div>
-                                <h3 class="text-lg font-bold text-gray-800 mb-6 tracking-tight">Aktivitäten</h3>
-                                <div class="mb-8 flex-grow w-full">
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-3">Empfehlung</span>
-                                    <div class="text-sm text-gray-600 leading-relaxed font-medium">
-                                        <span class="block text-gray-900 font-bold mb-2 text-base">Perfektes Wetter</span>
-                                        Ideal für Sport.
-                                    </div>
-                                </div>
-                                <div class="mt-auto">
-                                    <a href="#" class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300">
-                                        Mehr Infos
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="relative w-full px-6 md:px-12 my-24 h-[1px] rounded-none overflow-hidden"><div class="absolute inset-0 bg-ocean-shimmer opacity-70"></div><div class="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50"></div></div>
-
-            <section class="w-full">
-                <div class="w-full px-6 md:px-12">
-                    <h2 class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1">Luftqualität Hotspots</h2>
-                    <div class="bg-white p-3 rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 relative h-[600px] w-full">
-                        <div id="map" class="h-full w-full rounded relative z-0"></div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="relative w-full px-6 md:px-12 my-24 h-[1px] rounded-none overflow-hidden"><div class="absolute inset-0 bg-ocean-shimmer opacity-70"></div><div class="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50"></div></div>
-
-            <section class="w-full mb-20">
-                <div class="w-full px-6 md:px-12">
-                    <h2 class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1">Luftqualität in den vergangenen Wochen</h2>
-                    <div class="bg-white rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 p-6 md:p-8 h-[500px] w-full flex flex-col relative">
-                        <div class="flex items-center justify-between pb-6 border-b border-gray-100">
-                            <div class="flex items-center gap-3">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-fuchsia-50 text-fuchsia-600 border border-fuchsia-100/50">
-                                    <span class="w-2 h-2 rounded-sm bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.5)]"></span>
-                                    <span id="chart-city-label">Stadt</span>
-                                </span>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-cyan-50 text-cyan-600 border border-cyan-100/50">
-                                    <span class="w-2 h-2 rounded-sm bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]"></span>
-                                    Schweiz Ø
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flex-grow w-full relative mt-6">
-                            <canvas id="aqiChart"></canvas>
-                            <div id="chartjs-tooltip" class="opacity-0 absolute bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-4 py-3 rounded-md pointer-events-none transition-opacity duration-200 transform translate-y-2 z-20 min-w-[120px]"></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 bg-[length:200%_200%] animate-ocean-shimmer text-white py-12 px-6 text-center relative z-10 w-full -mt-px">
-            <div class="max-w-4xl mx-auto">
-                <p class="text-xs text-blue-100/80 leading-relaxed max-w-2xl mx-auto mb-10 tracking-wide">
-                    <span class="font-bold text-white">Disclaimer:</span> Diese Empfehlungen dienen nur zur Orientierung. Datenquelle: Open-Meteo Air Quality API (Mock).
-                </p>
-                <div class="flex flex-col md:flex-row items-center justify-between text-xs text-blue-50 gap-6 pt-8 border-t border-white/10">
-                    <div class="order-2 md:order-1 font-medium opacity-80">
-                        &copy; 2025 NAIMOSPHERE – Luftqualitätsmonitoring
-                    </div>
-                    <div class="flex gap-8 order-1 md:order-2 font-medium">
-                        <a href="#" class="text-white hover:text-blue-200 transition-colors">Datenschutz</a>
-                        <a href="#" class="text-white hover:text-blue-200 transition-colors">Impressum</a>
-                        <a href="#" class="text-white hover:text-blue-200 transition-colors">Kontakt</a>
-                    </div>
-                </div>
+        <section class="w-full">
+          <div class="w-full px-6 md:px-12">
+            <h2
+              class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1"
+            >
+              Luftqualität Hotspots
+            </h2>
+            <div
+              class="bg-white p-3 rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 relative h-[600px] w-full"
+            >
+              <div id="map" class="h-full w-full rounded relative z-0"></div>
             </div>
-        </footer>
+          </div>
+        </section>
+
+        <div
+          class="relative w-full px-6 md:px-12 my-24 h-[1px] rounded-none overflow-hidden"
+        >
+          <div class="absolute inset-0 bg-ocean-shimmer opacity-70"></div>
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-gray-50 via-transparent to-gray-50"
+          ></div>
+        </div>
+
+        <section class="w-full mb-20">
+          <div class="w-full px-6 md:px-12">
+            <h2
+              class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1"
+            >
+              Luftqualität Verlauf
+            </h2>
+            <div
+              class="bg-white rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 p-6 md:p-8 h-[500px] w-full flex flex-col relative"
+            >
+              <div
+                class="flex items-center justify-between pb-6 border-b border-gray-100"
+              >
+                <div class="flex items-center gap-3">
+                  <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-fuchsia-50 text-fuchsia-600 border border-fuchsia-100/50"
+                  >
+                    <span
+                      class="w-2 h-2 rounded-sm bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.5)]"
+                    ></span>
+                    <span id="chart-city-label">Stadt</span>
+                  </span>
+                  <span
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-cyan-50 text-cyan-600 border border-cyan-100/50"
+                  >
+                    <span
+                      class="w-2 h-2 rounded-sm bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]"
+                    ></span>
+                    Schweiz Ø
+                  </span>
+                </div>
+              </div>
+              <div class="flex-grow w-full relative mt-6">
+                <canvas id="aqiChart"></canvas>
+                <div
+                  id="chartjs-tooltip"
+                  class="opacity-0 absolute bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-4 py-3 rounded-md pointer-events-none transition-opacity duration-200 transform translate-y-2 z-20 min-w-[120px]"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer
+        class="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 bg-[length:200%_200%] animate-ocean-shimmer text-white py-12 px-6 text-center relative z-10 w-full -mt-px"
+      >
+        <div class="max-w-4xl mx-auto">
+          <p
+            class="text-xs text-blue-100/80 leading-relaxed max-w-2xl mx-auto mb-10 tracking-wide"
+          >
+            <span class="font-bold text-white">Disclaimer:</span> Datenquelle:
+            Open-Meteo Air Quality API.
+          </p>
+          <div
+            class="flex flex-col md:flex-row items-center justify-between text-xs text-blue-50 gap-6 pt-8 border-t border-white/10"
+          >
+            <div class="order-2 md:order-1 font-medium opacity-80">
+              &copy; 2025 NAIMOSPHERE – Luftqualitätsmonitoring
+            </div>
+            <div class="flex gap-8 order-1 md:order-2 font-medium">
+              <a
+                href="#"
+                class="text-white hover:text-blue-200 transition-colors"
+                >Datenschutz</a
+              >
+              <a
+                href="#"
+                class="text-white hover:text-blue-200 transition-colors"
+                >Impressum</a
+              >
+              <a
+                href="#"
+                class="text-white hover:text-blue-200 transition-colors"
+                >Kontakt</a
+              >
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        /**
-         * NAIMOSPHERE App Logic
-         * Strukturiert für Note 6.0: Trennung von Daten, Logik und UI.
-         */
-
-        const App = {
-            // --- DATA STORE ---
-            data: {
-                currentStatus: { aqi: 21, level: 'SEHR GUT', uv: 'niedrig' },
-                // Hinweis: Diese Mock-Daten werden später durch PHP/SQL ersetzt
-                locations: [
-                    { lat: 47.3769, lng: 8.5417, city: 'Zürich', status: 'moderate' }, 
-                    { lat: 47.5596, lng: 7.5886, city: 'Basel', status: 'good' },
-                    { lat: 46.9480, lng: 7.4474, city: 'Bern', status: 'poor' }, 
-                    { lat: 46.8503, lng: 9.5319, city: 'Chur', status: 'good' }, 
-                    { lat: 46.2044, lng: 6.1432, city: 'Genf', status: 'good' },
-                    { lat: 46.5197, lng: 6.6323, city: 'Lausanne', status: 'moderate' },
-                    { lat: 46.0037, lng: 8.9511, city: 'Lugano', status: 'good' },
-                    { lat: 47.0502, lng: 8.3093, city: 'Luzern', status: 'moderate' },
-                    { lat: 46.2294, lng: 7.3589, city: 'Sion', status: 'good' },
-                    { lat: 47.4245, lng: 9.3767, city: 'St. Gallen', status: 'good' }
-                ],
-                chartData: {
-                    'Basel': [65, 70, 60, 55, 62, 58, 60], 'Bern': [88, 85, 90, 82, 88, 80, 85],
-                    'Chur': [30, 35, 28, 32, 25, 30, 28], 'Genf': [55, 60, 52, 58, 55, 62, 59],
-                    'Lausanne': [50, 55, 48, 52, 50, 54, 51], 'Lugano': [40, 45, 38, 42, 40, 46, 43],
-                    'Luzern': [60, 65, 58, 62, 60, 66, 63], 'Sion': [35, 40, 32, 38, 35, 42, 39],
-                    'St. Gallen': [45, 50, 42, 48, 45, 52, 49], 'Zürich': [78, 95, 45, 90, 20, 92, 75]
-                },
-                switzerlandAvg: [55, 62, 58, 65, 60, 68, 63],
-                chartLabels: ['2', '4', '6', '8', '10', '12', '14']
-            },
-
-            // --- STATE ---
-            instances: { chart: null, map: null },
-
-            // --- INIT ---
-            init() {
-                this.initMap();
-                this.initDropdown();
-                this.updateStaticKPIs();
-            },
-
-            // --- DATA METHODS (Placeholder for API) ---
-            async fetchCityData(city) {
-                // Simulation API Request. Später: return await fetch(`/api/data?city=${city}`);
-                return {
-                    chart: this.data.chartData[city] || [],
-                    location: this.data.locations.find(l => l.city === city)
-                };
-            },
-
-            // --- UI UPDATES ---
-            updateStaticKPIs() {
-                document.getElementById('current-level').innerText = this.data.currentStatus.level;
-                document.getElementById('current-aqi').innerText = this.data.currentStatus.aqi;
-                document.getElementById('uv-value').innerText = this.data.currentStatus.uv.charAt(0).toUpperCase() + this.data.currentStatus.uv.slice(1);
-                setTimeout(() => { document.getElementById('aqi-bar').style.width = '20%'; }, 300);
-            },
-
-            // --- COMPONENTS ---
-            initDropdown() {
-                const els = {
-                    trigger: document.getElementById('dropdown-trigger'),
-                    options: document.getElementById('dropdown-options'),
-                    arrow: document.getElementById('dropdown-arrow'),
-                    list: document.getElementById('city-list'),
-                    label: document.getElementById('selected-city-text')
-                };
-
-                // Populate List
-                Object.keys(this.data.chartData).sort().forEach(city => {
-                    const li = document.createElement('li');
-                    li.className = "px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors text-sm font-medium border-b border-gray-50 last:border-0";
-                    li.innerText = city;
-                    li.addEventListener('click', () => {
-                        this.handleCitySelect(city, els.label);
-                        this.toggleDropdown(false, els);
-                    });
-                    els.list.appendChild(li);
-                });
-
-                // Event Listeners
-                els.trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.toggleDropdown(els.options.classList.contains('hidden'), els);
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!document.getElementById('custom-dropdown-container').contains(e.target)) {
-                        this.toggleDropdown(false, els);
-                    }
-                });
-            },
-
-            toggleDropdown(show, els) {
-                if (show) {
-                    els.options.classList.remove('hidden');
-                    els.arrow.style.transform = 'rotate(180deg)';
-                } else {
-                    els.options.classList.add('hidden');
-                    els.arrow.style.transform = 'rotate(0deg)';
-                }
-            },
-
-            async handleCitySelect(city, labelEl) {
-                labelEl.innerText = city;
-                labelEl.classList.add('text-white'); // Wichtig: Kontrast auf dunklem Header
-
-                // Reveal Dashboard Logic
-                const emptyState = document.getElementById('empty-state');
-                const dashboard = document.getElementById('dashboard-content');
-
-                if (!emptyState.classList.contains('hidden')) {
-                    emptyState.classList.add('hidden');
-                    dashboard.classList.remove('hidden');
-                    dashboard.classList.add('animate-fade-in');
-                    
-                    // Wait for DOM repaint before initializing complex visuals
-                    setTimeout(() => {
-                        this.instances.map.invalidateSize();
-                        if (!this.instances.chart) this.initChart(city);
-                    }, 100);
-                }
-
-                // Fetch Data
-                const data = await this.fetchCityData(city);
-
-                // Update Chart
-                if (this.instances.chart) {
-                    this.instances.chart.data.datasets[0].data = data.chart;
-                    this.instances.chart.data.datasets[0].label = city;
-                    this.instances.chart.update();
-                    document.getElementById('chart-city-label').innerText = city;
-                }
-
-                // Update Map (Optional: Center map if needed, but Rebound handles it)
-                // this.instances.map.flyTo(...) -> weglassen für Rebound Effekt
-            },
-
-            initMap() {
-                const initialCenter = [46.8182, 8.2275];
-                const zoom = 7.5;
-                
-                this.instances.map = L.map('map', { center: initialCenter, zoom: zoom, zoomSnap: 0.5, zoomControl: false, scrollWheelZoom: false });
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; CARTO', className: 'map-tiles-grayscale' }).addTo(this.instances.map);
-
-                this.data.locations.forEach(loc => {
-                    let colorClass, bgClass;
-                    switch(loc.status) {
-                        case 'good': colorClass = 'bg-emerald-500'; bgClass = 'bg-emerald-400'; break;
-                        case 'moderate': colorClass = 'bg-orange-500'; bgClass = 'bg-orange-400'; break;
-                        case 'poor': colorClass = 'bg-rose-500'; bgClass = 'bg-rose-400'; break;
-                    }
-                    // Exact positioning via CSS removal
-                    const icon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div class="relative flex items-center justify-center w-20 h-20 pointer-events-none"><div class="absolute inset-0 flex items-center justify-center" style="animation: emitter-rotate 20s linear infinite;"><span class="absolute w-10 h-10 rounded-full ${bgClass} blur-[4px] opacity-0" style="animation: wind-puff 8s ease-out infinite;"></span></div><span class="relative inline-flex w-3 h-3 rounded-full ${colorClass} border-2 border-white shadow-sm z-10"></span></div>`,
-                        iconSize: [80, 80], iconAnchor: [40, 40]
-                    });
-                    L.marker([loc.lat, loc.lng], { icon: icon }).bindTooltip(loc.city, { direction: 'top', offset: [0, -16], className: 'custom-tooltip' }).addTo(this.instances.map);
-                });
-
-                // Rebound Effect on Drag End
-                this.instances.map.on('dragend', () => {
-                    setTimeout(() => {
-                        this.instances.map.flyTo(initialCenter, zoom, { animate: true, duration: 1.2, easeLinearity: 0.25 });
-                    }, 100);
-                });
-
-                // Legend Control
-                const legend = L.control({ position: 'topleft' });
-                legend.onAdd = () => {
-                    const div = L.DomUtil.create('div', 'legend');
-                    div.innerHTML = `<div class="bg-white/90 backdrop-blur-md border border-white/40 shadow-lg rounded-lg p-4 min-w-[140px] ml-4 mt-4"><h4 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4 block">Legende</h4><div class="flex flex-col space-y-3"><div class="flex items-center"><span class="relative flex h-3 w-3 mr-3"><span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span></span><span class="text-sm font-medium text-gray-700">Gut</span></div><div class="flex items-center"><span class="relative flex h-3 w-3 mr-3"><span class="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span></span><span class="text-sm font-medium text-gray-700">Mittel</span></div><div class="flex items-center"><span class="relative flex h-3 w-3 mr-3"><span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span></span><span class="text-sm font-medium text-gray-700">Schlecht</span></div></div></div>`;
-                    return div;
-                };
-                legend.addTo(this.instances.map);
-            },
-
-            initChart(initialCity) {
-                const ctx = document.getElementById('aqiChart').getContext('2d');
-                const g1 = ctx.createLinearGradient(0, 0, 0, 400); g1.addColorStop(0, 'rgba(217, 70, 239, 0.4)'); g1.addColorStop(1, 'rgba(217, 70, 239, 0)');
-                const g2 = ctx.createLinearGradient(0, 0, 0, 400); g2.addColorStop(0, 'rgba(6, 182, 212, 0.4)'); g2.addColorStop(1, 'rgba(6, 182, 212, 0)');
-
-                const initData = this.data.chartData[initialCity] || [];
-                document.getElementById('chart-city-label').innerText = initialCity;
-
-                this.instances.chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: this.data.chartLabels,
-                        datasets: [
-                            { label: initialCity, data: initData, borderColor: '#d946ef', backgroundColor: g1, borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#fff', pointBorderColor: '#d946ef', pointRadius: 4, pointHoverRadius: 6 },
-                            { label: 'Schweiz Ø', data: this.data.switzerlandAvg, borderColor: '#06b6d4', backgroundColor: g2, borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#fff', pointBorderColor: '#06b6d4', pointRadius: 4, pointHoverRadius: 6 }
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: { legend: { display: false }, tooltip: { enabled: false, external: this.chartTooltipHandler } },
-                        scales: { x: { display: false }, y: { min: 0, max: 140, grid: { color: '#F3F4F6', borderDash: [5, 5], drawBorder: false }, ticks: { font: { family: "'Inter', sans-serif", size: 12 }, color: '#9CA3AF', stepSize: 20 }, border: { display: false } } },
-                        interaction: { mode: 'index', intersect: false }
-                    }
-                });
-            },
-
-            chartTooltipHandler(context) {
-                const {chart, tooltip} = context;
-                const el = document.getElementById('chartjs-tooltip');
-                if (tooltip.opacity === 0) { el.style.opacity = 0; return; }
-
-                if (tooltip.body) {
-                    const title = tooltip.title[0] || '';
-                    const lines = tooltip.body.map(b => b.lines);
-                    let html = `<div class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2 text-left">TAG ${title}</div>`;
-                    
-                    lines.forEach((line, i) => {
-                        const pt = tooltip.dataPoints[i];
-                        const color = i === 0 ? '#d946ef' : '#06b6d4';
-                        html += `<div class="flex items-center justify-between gap-4 mb-1"><span class="text-sm font-medium text-gray-600 whitespace-nowrap">${pt.dataset.label}</span><span class="text-xl font-bold whitespace-nowrap" style="color: ${color}">${pt.formattedValue} <span class="text-[10px] text-gray-400 font-normal">AQI</span></span></div>`;
-                    });
-                    el.innerHTML = html;
-                }
-
-                const {offsetLeft: x, offsetTop: y} = chart.canvas;
-                el.style.opacity = 1;
-                el.style.top = (y + tooltip.caretY) + 'px';
-                el.style.left = (x + tooltip.caretX + (tooltip.caretX > chart.width/2 ? -el.offsetWidth - 20 : 20)) + 'px';
-                el.style.transform = 'translateY(-50%)';
-            }
-        };
-
-        // Start Application
-        App.init();
-    </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
