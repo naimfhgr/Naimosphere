@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Impressum - NAIMOSPHERE</title>
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233b82f6%22 stroke-width=%222.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2%22/><path d=%22M9.6 4.6A2 2 0 1 1 11 8H2%22/><path d=%22M12.6 19.4A2 2 0 1 0 14 16H2%22/></svg>"
+      type="image/svg+xml"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Inter", "sans-serif"] },
+            colors: {
+              brand: { green: "#10B981", orange: "#F59E0B", red: "#EF4444" },
+            },
+            boxShadow: {
+              soft: "0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)",
+              "card-hover":
+                "0 0 0 1px rgba(0,0,0,0.03), 0 8px 16px rgba(0,0,0,0.08)",
+            },
+            animation: {
+              "ocean-shimmer": "ocean-shimmer 8s ease-in-out infinite",
+              "fade-in": "fadeIn 0.6s ease-out forwards",
+            },
+            keyframes: {
+              "ocean-shimmer": {
+                "0%, 100%": { backgroundPosition: "0% 50%" },
+                "50%": { backgroundPosition: "100% 50%" },
+              },
+              fadeIn: {
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body
+    class="bg-zinc-600 text-gray-600 font-sans antialiased selection:bg-blue-500 selection:text-white min-h-screen py-0 md:py-10 flex justify-center items-start"
+  >
+    <div
+      class="w-full max-w-[1024px] bg-slate-900 shadow-2xl md:rounded-xl overflow-hidden flex flex-col relative min-h-[800px]"
+    >
+      <header
+        class="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 bg-[length:200%_200%] animate-ocean-shimmer text-white pt-12 pb-16 px-6 relative z-20 shadow-lg md:rounded-t-xl"
+      >
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
+          <div class="absolute top-6 left-6 animate-fade-in">
+            <a
+              href="index.html"
+              class="flex items-center gap-2 text-blue-200 hover:text-white transition-colors text-sm font-semibold group"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="transform group-hover:-translate-x-1 transition-transform"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              Zurück zum Dashboard
+            </a>
+          </div>
+
+          <div class="flex items-center gap-3 mb-6 animate-fade-in">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="40"
+              height="40"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-white"
+            >
+              <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2" />
+              <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
+              <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
+            </svg>
+            <h1
+              class="text-3xl md:text-4xl font-bold tracking-tight text-white drop-shadow-sm"
+            >
+              NAIMOSPHERE
+            </h1>
+          </div>
+
+          <p
+            class="text-lg md:text-xl font-medium max-w-2xl text-blue-50 mb-4 leading-relaxed tracking-wide drop-shadow-sm opacity-95 animate-fade-in"
+            style="animation-delay: 0.1s"
+          >
+            Impressum & Rechtliche Hinweise
+          </p>
+        </div>
+      </header>
+
+      <main
+        class="w-full flex-grow bg-gray-50 relative z-10 py-12 px-6 md:px-12 animate-fade-in"
+        style="animation-delay: 0.2s"
+      >
+        <div class="max-w-3xl mx-auto space-y-12">
+          <section>
+            <h2
+              class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-200 pb-2"
+            >
+              Kontakt & Verantwortung
+            </h2>
+
+            <div
+              class="bg-white rounded-lg shadow-soft border border-gray-200/60 p-8 grid grid-cols-1 md:grid-cols-2 gap-8"
+            >
+              <div>
+                <h3 class="text-gray-900 font-bold text-lg mb-1">
+                  Naim El Amri Fernandez
+                </h3>
+                <p class="text-gray-500 text-sm mb-3">
+                  Student Multimedia Production
+                </p>
+                <a
+                  href="mailto:naim.elamrifernandez@stud.fhgr.ch"
+                  class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                  naim.elamrifernandez@stud.fhgr.ch
+                </a>
+              </div>
+              <div>
+                <h3 class="text-gray-900 font-bold text-lg mb-1">Ali Tas</h3>
+                <p class="text-gray-500 text-sm mb-3">
+                  Student Multimedia Production
+                </p>
+                <a
+                  href="mailto:ali.tas@stud.fhgr.ch"
+                  class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                  ali.tas@stud.fhgr.ch
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2
+              class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-200 pb-2"
+            >
+              Projektkontext
+            </h2>
+            <div
+              class="bg-white rounded-lg shadow-soft border border-gray-200/60 p-8"
+            >
+              <p class="text-gray-600 leading-relaxed mb-6">
+                Dieses Projekt entstand im Rahmen des Moduls
+                <strong>Interaktive Medien III (IM3)</strong> im Studiengang
+                <em>Multimedia Production</em> an der:
+              </p>
+              <div class="font-semibold text-gray-800 mb-8">
+                Fachhochschule Graubünden (FHGR)<br />
+                Pulvermühlestrasse 57<br />
+                7000 Chur<br />
+                Schweiz
+              </div>
+
+              <div class="pt-6 border-t border-gray-100">
+                <h4 class="text-sm font-bold text-gray-900 mb-3">
+                  Quellcode (GitHub)
+                </h4>
+                <a
+                  href="https://github.com/naimfhgr/Naimosphere"
+                  target="_blank"
+                  class="group flex items-center gap-3 text-gray-600 hover:text-blue-600 transition-colors p-3 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50/50"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="text-gray-400 group-hover:text-blue-500 transition-colors"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 2.5-.34c.85.01 1.7.11 2.5.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"
+                    />
+                  </svg>
+                  <span class="font-medium text-sm"
+                    >github.com/naimfhgr/Naimosphere</span
+                  >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <path
+                      d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2
+              class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-200 pb-2"
+            >
+              Haftungsausschluss & Datenschutz
+            </h2>
+            <div
+              class="bg-white rounded-lg shadow-soft border border-gray-200/60 p-8 space-y-6"
+            >
+              <div>
+                <h3 class="text-gray-900 font-bold text-base mb-2">
+                  1. Inhalt des Onlineangebotes
+                </h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                  Dies ist ein studentisches Projekt zu Bildungszwecken. Die
+                  Autoren übernehmen keinerlei Gewähr für die Aktualität,
+                  Korrektheit, Vollständigkeit oder Qualität der
+                  bereitgestellten Informationen (insbesondere der
+                  Luftqualitätsdaten). Haftungsansprüche gegen die Autoren sind
+                  grundsätzlich ausgeschlossen.
+                </p>
+              </div>
+              <div>
+                <h3 class="text-gray-900 font-bold text-base mb-2">
+                  2. Datenquellen (APIs)
+                </h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                  Diese Webseite bezieht Daten automatisiert von externen
+                  Schnittstellen (APIs). Wir haben keinen Einfluss auf die
+                  Verfügbarkeit oder Richtigkeit dieser externen Daten.
+                  <br /><br />
+                  <strong>Verwendete API:</strong>
+                  <a
+                    href="https://open-meteo.com/en/docs/air-quality-api"
+                    target="_blank"
+                    class="text-blue-600 hover:underline"
+                    >Open-Meteo Air Quality API</a
+                  >
+                  (CC BY 4.0).
+                </p>
+              </div>
+              <div>
+                <h3 class="text-gray-900 font-bold text-base mb-2">
+                  3. Datenschutz
+                </h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                  Die Nutzung unserer Webseite ist in der Regel ohne Angabe
+                  personenbezogener Daten möglich. Es werden keine
+                  Tracking-Cookies von uns gesetzt. Der Hosting-Provider
+                  (Infomaniak) erhebt möglicherweise Server-Logfiles
+                  (IP-Adresse, Browser, Uhrzeit) zur Sicherstellung des
+                  Betriebs.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2
+              class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-200 pb-2"
+            >
+              Technische Umsetzung & Credits
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div
+                class="bg-white rounded-lg p-6 shadow-soft border border-gray-200/60 flex flex-col h-full"
+              >
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="bg-slate-100 text-slate-600 p-1.5 rounded">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect width="18" height="18" x="3" y="3" rx="2" />
+                      <path d="M15 9h.01" />
+                      <path d="M9 15h.01" />
+                      <path d="m9 9 6 6" />
+                    </svg>
+                  </span>
+                  <h4 class="font-bold text-gray-800">Backend</h4>
+                </div>
+                <ul class="text-sm text-gray-600 space-y-3 flex-grow">
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">PHP (PDO, cURL):</strong>
+                    Genutzt für API-Calls und sichere Datenbank-Operationen.
+                  </li>
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">MariaDB:</strong> Relationale
+                    Speicherung mit Primärschlüsseln zur Vermeidung von
+                    Duplikaten (Historisierung).
+                  </li>
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">Automatisierung:</strong>
+                    Serverseitiger Cronjob für stündliche Updates (ETL-Prozess).
+                  </li>
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">Hosting:</strong> Apache
+                    Server (Infomaniak).
+                  </li>
+                </ul>
+              </div>
+
+              <div
+                class="bg-white rounded-lg p-6 shadow-soft border border-gray-200/60 flex flex-col h-full"
+              >
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="bg-blue-50 text-blue-600 p-1.5 rounded">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                      <path d="M12 8v4" />
+                      <path d="M12 16h.01" />
+                    </svg>
+                  </span>
+                  <h4 class="font-bold text-gray-800">Frontend</h4>
+                </div>
+                <ul class="text-sm text-gray-600 space-y-3 flex-grow">
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">Tailwind CSS:</strong> Für
+                    effizientes, responsives Styling und modernes UI-Design.
+                  </li>
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">Leaflet.js:</strong>
+                    Interaktive Kartenansicht der Messstationen.
+                  </li>
+                  <li class="leading-relaxed">
+                    <strong class="text-gray-800">Chart.js:</strong>
+                    Visualisierung der historischen Verläufe (Vergleich Stadt
+                    vs. Schweiz).
+                  </li>
+                  <li class="leading-relaxed"></li>
+                    <strong class="text-gray-800">W3.org:</strong>
+                    Für die SVG Icons in unserem Projekt.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer
+        class="bg-gradient-to-br from-slate-900 via-blue-900 to-blue-600 bg-[length:200%_200%] animate-ocean-shimmer text-white py-12 px-6 text-center relative z-10 w-full -mt-px md:rounded-b-xl"
+      >
+        <div class="max-w-4xl mx-auto">
+          <p
+            class="text-xs text-blue-100/80 leading-relaxed max-w-2xl mx-auto mb-10 tracking-wide"
+          >
+            <span class="font-bold text-white">Disclaimer:</span> Diese
+            Empfehlungen dienen nur zur Orientierung und ersetzen keine
+            medizinische Beratung. Datenquelle: Open-Meteo Air Quality API.
+          </p>
+          <div
+            class="flex flex-col md:flex-row items-center justify-between text-xs text-blue-50 gap-6 pt-8 border-t border-white/10"
+          >
+            <div class="order-2 md:order-1 font-medium opacity-80">
+              &copy; 2025 NAIMOSPHERE – Luftqualitätsmonitoring
+            </div>
+            <div class="flex gap-8 order-1 md:order-2 font-medium">
+              <a
+                href="index.html"
+                class="text-white hover:text-blue-200 transition-colors"
+                >Dashboard</a
+              >
+              <span class="text-white/50 cursor-default">Impressum</span>
+              <a
+                href="mailto:naim.elamrifernandez@stud.fhgr.ch"
+                class="text-white hover:text-blue-200 transition-colors"
+                >Kontakt</a
+              >
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
