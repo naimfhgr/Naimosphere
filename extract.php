@@ -3,14 +3,16 @@
 // Holt Rohdaten aus der Open-Meteo Air-Quality-API via cURL
 // Ersetzt file_get_contents (wegen allow_url_fopen=0 bei Infomaniak)
 
-function extractData($lat, $lon) {
+// NEU: Parameter $pastDays hinzugefügt mit Standardwert 14
+function extractData($lat, $lon, $pastDays = 14) {
 
-    // URL zusammenbauen (wie vorher)
+    // URL zusammenbauen
+    // forecast_days=0 ist gut, spart Daten!
     $url = "https://air-quality-api.open-meteo.com/v1/air-quality?"
          . "latitude=$lat&longitude=$lon"
          . "&hourly=european_aqi,pm10,pm2_5,ozone,birch_pollen,grass_pollen"
          . "&timezone=Europe%2FZurich"
-         . "&past_days=14"
+         . "&past_days=$pastDays" 
          . "&forecast_days=0";
 
     // 1. cURL-Session initialisieren
@@ -18,13 +20,10 @@ function extractData($lat, $lon) {
 
     // 2. Optionen setzen
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Antwort als String zurückgeben, nicht direkt ausgeben
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Antwort als String zurückgeben
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);          // Maximal 10 Sekunden warten
-    curl_setopt($ch, CURLOPT_FAILONERROR, false);   // HTTP-Fehler nicht als cURL-Fehler behandeln (wir prüfen manuell)
+    curl_setopt($ch, CURLOPT_FAILONERROR, false);   // HTTP-Fehler manuell prüfen
     
-    // Falls SSL-Probleme auftreten (sollte bei Infomaniak nicht nötig sein, aber zur Sicherheit):
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-
     // 3. Ausführen
     $raw = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -35,18 +34,15 @@ function extractData($lat, $lon) {
 
     // Fehlerprüfung
     if ($raw === false) {
-        // Netzwerkfehler (z.B. DNS, Timeout)
         echo "   cURL Fehler: $curlError\n";
         return null;
     }
 
     if ($httpCode !== 200) {
-        // API hat geantwortet, aber mit Fehler (z.B. 404 oder 500)
         echo "   API HTTP Status: $httpCode\n";
         return null;
     }
 
-    // JSON dekodieren
     $data = json_decode($raw, true);
 
     if ($data === null) {

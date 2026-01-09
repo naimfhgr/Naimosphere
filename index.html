@@ -275,30 +275,6 @@
                       Belastung prüfen.
                     </div>
                   </div>
-                  <!-- <div class="mt-auto">
-                    <a
-                      href="https://www.meteoschweiz.admin.ch/service-und-publikationen/applikationen/pollenprognose.html#tab=pollen-map&pollen=all"
-                      target="_blank"
-                      class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300"
-                    >
-                      Mehr Infos
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </a>
-                  </div> -->
                 </div>
 
                 <div
@@ -326,29 +302,6 @@
                       Aktivitäten unbedenklich.
                     </div>
                   </div>
-                  <!-- <div class="mt-auto">
-                    <a
-                      href="#"
-                      class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300"
-                    >
-                      Mehr Infos
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </a>
-                  </div> -->
                 </div>
 
                 <div
@@ -369,29 +322,6 @@
                       class="text-sm text-gray-600 leading-relaxed font-medium"
                     ></div>
                   </div>
-                  <!-- <div class="mt-auto">
-                    <a
-                      href="#"
-                      class="group inline-flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300"
-                    >
-                      Mehr Infos
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="ml-1 transform group-hover:translate-x-1 transition-transform duration-300"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </a>
-                  </div> -->
                 </div>
               </div>
             </div>
@@ -415,7 +345,7 @@
               Luftqualität Hotspots
             </h2>
             <div
-              class="bg-white p-3 rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 relative h-[600px] w-full"
+              class="bg-white p-3 rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 relative h-[300px] md:h-[600px] w-full"
             >
               <div id="map" class="h-full w-full rounded relative z-0"></div>
             </div>
@@ -436,13 +366,13 @@
             <h2
               class="text-xl font-bold text-gray-800 uppercase tracking-wide mb-8 pl-1 text-center"
             >
-              Verlauf Luftqualität der letzten 14 Tagen
+              Verlauf Luftqualität
             </h2>
             <div
               class="bg-white rounded-lg shadow-soft hover:shadow-card-hover transition-all duration-300 border border-gray-200/60 p-6 md:p-8 h-[500px] w-full flex flex-col relative"
             >
               <div
-                class="flex items-center justify-between pb-6 border-b border-gray-100"
+                class="flex flex-col md:flex-row items-center justify-between pb-6 border-b border-gray-100 gap-4"
               >
                 <div class="flex items-center gap-3">
                   <span
@@ -462,9 +392,48 @@
                     Schweiz Ø
                   </span>
                 </div>
+
+                <div class="flex bg-gray-100 p-1 rounded-lg">
+                  <button
+                    class="time-filter px-3 py-1 text-xs font-bold rounded-md transition-all bg-white shadow-sm text-blue-600 hover:text-gray-900"
+                    data-range="14d"
+                  >
+                    14T
+                  </button>
+                  <button
+                    class="time-filter px-3 py-1 text-xs font-bold rounded-md transition-all text-gray-500 hover:text-gray-900"
+                    data-range="1m"
+                  >
+                    1M
+                  </button>
+                  <button
+                    class="time-filter px-3 py-1 text-xs font-bold rounded-md transition-all text-gray-500 hover:text-gray-900"
+                    data-range="3m"
+                  >
+                    3M
+                  </button>
+                  <button
+                    class="time-filter px-3 py-1 text-xs font-bold rounded-md transition-all text-gray-500 hover:text-gray-900"
+                    data-range="6m"
+                  >
+                    6M
+                  </button>
+                  <button
+                    class="time-filter px-3 py-1 text-xs font-bold rounded-md transition-all text-gray-500 hover:text-gray-900"
+                    data-range="1y"
+                  >
+                    1J
+                  </button>
+                </div>
               </div>
-              <div class="flex-grow w-full relative mt-6">
-                <canvas id="aqiChart"></canvas>
+
+              <div
+                class="flex-grow w-full relative mt-6 overflow-hidden min-h-0"
+              >
+                <canvas
+                  id="aqiChart"
+                  style="position: relative; height: 100%; width: 100%"
+                ></canvas>
                 <div
                   id="chartjs-tooltip"
                   class="opacity-0 absolute bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-4 py-3 rounded-md pointer-events-none transition-opacity duration-200 transform translate-y-2 z-20 min-w-[120px]"
@@ -494,7 +463,7 @@
             </div>
             <div class="flex gap-8 order-1 md:order-2 font-medium">
               <a
-                href="#"
+                href="impressum.html"
                 class="text-white hover:text-blue-200 transition-colors"
                 >Datenschutz</a
               >
@@ -504,7 +473,7 @@
                 >Impressum</a
               >
               <a
-                href="#"
+                href="impressum.html"
                 class="text-white hover:text-blue-200 transition-colors"
                 >Kontakt</a
               >

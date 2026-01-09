@@ -2,6 +2,7 @@
 // unload.php
 require_once "config.php";
 
+header("Cache-Control: no-cache, must-revalidate");
 header("Content-Type: application/json; charset=utf-8");
 header("Access-Control-Allow-Origin: *");
 
@@ -40,46 +41,75 @@ function get_status_class(?int $aqi): string {
     return "poor";
 }
 
+function clean_val($val) {
+    if ($val === null || $val === "") return null;
+    $v = round((float)$val);
+    return ($v > 0) ? $v : null;
+}
+
 $mode = isset($_GET["mode"]) ? $_GET["mode"] : "detail";
 $city = isset($_GET["city"]) ? trim($_GET["city"]) : "";
 
-// --- MODUS 1: OVERVIEW ---
+// --- MODE: OVERVIEW ---
 if ($mode === "overview") {
     $overviewData = [];
-    foreach ($cities as $name => $coords) {
-        $lat = $coords["lat"];
-        $lon = $coords["lon"];
-        
-        $stmt = $conn->prepare("
-            SELECT european_aqi FROM air_quality
-            WHERE ABS(latitude - ?) < 0.01 AND ABS(longitude - ?) < 0.01
-              AND time <= NOW()
-            ORDER BY time DESC LIMIT 1
-        ");
-        $stmt->bind_param("dd", $lat, $lon);
+
+    $stmtTime = $conn->prepare("SELECT MAX(time) as latest_time FROM air_quality");
+    $stmtTime->execute();
+    $timeRes = $stmtTime->get_result()->fetch_assoc();
+    $latestTime = $timeRes['latest_time'] ?? null;
+    $stmtTime->close();
+
+    if ($latestTime) {
+        $stmt = $conn->prepare("SELECT latitude, longitude, european_aqi FROM air_quality WHERE time = ?");
+        $stmt->bind_param("s", $latestTime);
         $stmt->execute();
-        $res = $stmt->get_result();
-        $row = $res->fetch_assoc();
-        
-        $aqi = $row ? (int)$row["european_aqi"] : null;
-        
-        $overviewData[] = [
-            "city" => $name, "lat" => $lat, "lng" => $lon, "aqi" => $aqi, "status" => get_status_class($aqi)
-        ];
+        $result = $stmt->get_result();
+
+        $dbRows = [];
+        while ($row = $result->fetch_assoc()) {
+            $dbRows[] = $row;
+        }
         $stmt->close();
+
+        foreach ($cities as $name => $coords) {
+            $foundAqi = null;
+            $latRef = $coords["lat"];
+            $lonRef = $coords["lon"];
+
+            foreach ($dbRows as $dbRow) {
+                if (abs($dbRow['latitude'] - $latRef) < 0.01 && abs($dbRow['longitude'] - $lonRef) < 0.01) {
+                    $foundAqi = (int)$dbRow['european_aqi'];
+                    break; 
+                }
+            }
+
+            $overviewData[] = [
+                "city" => $name, 
+                "lat" => $latRef, 
+                "lng" => $lonRef, 
+                "aqi" => $foundAqi, 
+                "status" => get_status_class($foundAqi)
+            ];
+        }
+    } else {
+        foreach ($cities as $name => $coords) {
+            $overviewData[] = ["city" => $name, "lat" => $coords["lat"], "lng" => $coords["lon"], "aqi" => null, "status" => "unknown"];
+        }
     }
     respond_json(["success" => true, "locations" => $overviewData]);
 }
 
-// --- MODUS 2: DETAIL ---
+// --- MODE: DETAIL ---
 if ($city === "" || !array_key_exists($city, $cities)) {
-    respond_json(["success" => false, "error" => "Stadt fehlt."], 400);
+    respond_json(["success" => false, "error" => "Stadt fehlt oder ungültig."], 400);
 }
 
 $lat = $cities[$city]["lat"];
 $lon = $cities[$city]["lon"];
+$range = isset($_GET['range']) ? $_GET['range'] : '14d';
 
-// 1. Aktuelle Werte
+// Latest Data
 $stmt = $conn->prepare("
     SELECT * FROM air_quality
     WHERE ABS(latitude - ?) < 0.01 AND ABS(longitude - ?) < 0.01
@@ -91,64 +121,135 @@ $stmt->execute();
 $latest = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$latest) respond_json(["success" => false, "error" => "Keine Daten"], 404);
+if (!$latest) {
+    $latest = ["european_aqi" => null, "pm10" => 0, "pm2_5" => 0, "ozone" => 0, "birch_pollen" => 0, "grass_pollen" => 0];
+}
 
-// 2. Historie Stadt
-$stmtHistory = $conn->prepare("
-    SELECT DATE(time) as dayDate, AVG(european_aqi) as avgAqi
+// Zeiträume
+$now = new DateTime();
+$now->setTime(23, 59, 59); 
+
+$startDate = clone $now;
+$startDate->setTime(0, 0, 0);
+
+$sqlFormat = '%Y-%m-%d';
+$intervalStep = 'P1D'; 
+$labelFormat = 'd.m.';   
+
+switch ($range) {
+    case '1m': $startDate->modify('-1 month'); break;
+    case '3m': 
+        $startDate->modify('-3 months');
+        $sqlFormat = '%x-%v';
+        $intervalStep = 'P1W';
+        $labelFormat = '\K\W W'; 
+        break;
+    case '6m': 
+        $startDate->modify('-6 months');
+        $sqlFormat = '%x-%v';
+        $intervalStep = 'P1W';
+        $labelFormat = '\K\W W';
+        break;
+    case '1y': 
+        $startDate->modify('-1 year');
+        $sqlFormat = '%x-%v';
+        $intervalStep = 'P1W';
+        $labelFormat = '\K\W W';
+        break;
+    default: 
+        $startDate->modify('-13 days');
+        break;
+}
+
+// Template generieren
+$templateData = [];
+$labels = [];
+$period = new DatePeriod($startDate, new DateInterval($intervalStep), $now);
+
+foreach ($period as $dt) {
+    if ($range === '3m' || $range === '6m' || $range === '1y') {
+        $key = $dt->format('o-W');
+    } else {
+        $key = $dt->format('Y-m-d');
+    }
+    $templateData[$key] = null;
+    $labels[] = $dt->format($labelFormat);
+}
+
+$sqlStartDate = $startDate->format('Y-m-d H:i:s');
+
+// A) City Data
+$sqlCity = "
+    SELECT DATE_FORMAT(time, '$sqlFormat') as timeKey, AVG(european_aqi) as val
     FROM air_quality
     WHERE ABS(latitude - ?) < 0.01 AND ABS(longitude - ?) < 0.01
-      AND time <= NOW()
-    GROUP BY DATE(time)
-    ORDER BY dayDate DESC
-    LIMIT 14
-");
-$stmtHistory->bind_param("dd", $lat, $lon);
-$stmtHistory->execute();
-$histResult = $stmtHistory->get_result();
-$cityHistory = [];
-while ($r = $histResult->fetch_assoc()) {
-    $cityHistory[$r['dayDate']] = round($r['avgAqi']);
-}
-$stmtHistory->close();
+      AND time >= ? AND time <= NOW()
+    GROUP BY timeKey
+";
+$stmt = $conn->prepare($sqlCity);
+$stmt->bind_param("dds", $lat, $lon, $sqlStartDate);
+$stmt->execute();
+$res = $stmt->get_result();
 
-// 3. Historie Schweiz
-$stmtSwiss = $conn->prepare("
-    SELECT DATE(time) as dayDate, AVG(european_aqi) as avgAqi
+$cityDataFilled = $templateData;
+while ($r = $res->fetch_assoc()) {
+    $k = $r['timeKey'];
+    if (array_key_exists($k, $cityDataFilled)) {
+        $cityDataFilled[$k] = clean_val($r['val']);
+    }
+}
+$stmt->close();
+
+// B) Swiss Data
+$sqlSwiss = "
+    SELECT DATE_FORMAT(time, '$sqlFormat') as timeKey, AVG(european_aqi) as val
     FROM air_quality
-    WHERE time <= NOW()
-    GROUP BY DATE(time)
-    ORDER BY dayDate DESC
-    LIMIT 14
-");
-$stmtSwiss->execute();
-$swissResult = $stmtSwiss->get_result();
-$swissHistory = [];
-while ($r = $swissResult->fetch_assoc()) {
-    $swissHistory[$r['dayDate']] = round($r['avgAqi']);
+    WHERE time >= ? AND time <= NOW()
+    GROUP BY timeKey
+";
+$stmt = $conn->prepare($sqlSwiss);
+$stmt->bind_param("s", $sqlStartDate);
+$stmt->execute();
+$res = $stmt->get_result();
+
+$swissDataFilled = $templateData;
+while ($r = $res->fetch_assoc()) {
+    $k = $r['timeKey'];
+    if (array_key_exists($k, $swissDataFilled)) {
+        $swissDataFilled[$k] = clean_val($r['val']);
+    }
 }
-$stmtSwiss->close();
+$stmt->close();
 
-$labels = array_reverse(array_keys($cityHistory));
-$dataCity = [];
-$dataSwiss = [];
-$formattedLabels = [];
+// Trimmen (Zukunft abschneiden)
+$finalCityVals = array_values($cityDataFilled);
+$finalSwissVals = array_values($swissDataFilled);
 
-foreach ($labels as $date) {
-    $dataCity[] = $cityHistory[$date] ?? null;
-    $dataSwiss[] = $swissHistory[$date] ?? null;
-    $d = date_create($date);
-    $formattedLabels[] = date_format($d, "d.m.");
+$lastValidIndex = -1;
+$totalPoints = count($labels);
+
+for ($i = $totalPoints - 1; $i >= 0; $i--) {
+    if ($finalCityVals[$i] !== null || $finalSwissVals[$i] !== null) {
+        $lastValidIndex = $i;
+        break;
+    }
 }
 
-// Pollen Maximum berechnen (Birke oder Gras)
-$maxPollen = max((float)$latest["birch_pollen"], (float)$latest["grass_pollen"]);
+if ($lastValidIndex >= 0) {
+    $labels = array_slice($labels, 0, $lastValidIndex + 1);
+    $finalCityVals = array_slice($finalCityVals, 0, $lastValidIndex + 1);
+    $finalSwissVals = array_slice($finalSwissVals, 0, $lastValidIndex + 1);
+}
 
-// Schadstoff ermitteln
+// Pollutants / Output
+$pBirch = isset($latest["birch_pollen"]) ? (float)$latest["birch_pollen"] : 0;
+$pGrass = isset($latest["grass_pollen"]) ? (float)$latest["grass_pollen"] : 0;
+$maxPollen = max($pBirch, $pGrass);
+
 $pollutants = [
-    "Feinstaub (PM10)" => $latest["pm10"],
-    "Feinstaub (PM2.5)" => $latest["pm2_5"],
-    "Ozon" => $latest["ozone"],
+    "Feinstaub (PM10)" => $latest["pm10"] ?? 0,
+    "Feinstaub (PM2.5)" => $latest["pm2_5"] ?? 0,
+    "Ozon" => $latest["ozone"] ?? 0,
     "Pollen" => $maxPollen
 ];
 arsort($pollutants);
@@ -158,15 +259,15 @@ respond_json([
     "success" => true,
     "city" => $city,
     "current" => [
-        "aqi" => (int)$latest["european_aqi"],
-        "level" => categorize_aqi((int)$latest["european_aqi"]),
+        "aqi" => isset($latest["european_aqi"]) ? (int)$latest["european_aqi"] : null,
+        "level" => categorize_aqi(isset($latest["european_aqi"]) ? (int)$latest["european_aqi"] : null),
         "main_pollutant" => $mainPollutant,
-        "pollen" => $maxPollen // HIER NEU: Pollenwert senden
+        "pollen" => $maxPollen
     ],
     "history" => [
-        "labels" => $formattedLabels,
-        "city_values" => $dataCity,
-        "swiss_values" => $dataSwiss
+        "labels" => $labels,
+        "city_values" => $finalCityVals,
+        "swiss_values" => $finalSwissVals
     ]
 ]);
 ?>

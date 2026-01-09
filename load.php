@@ -1,8 +1,9 @@
 <?php
 // load.php
-// 1. WICHTIG für Cronjobs: Arbeitsverzeichnis auf den aktuellen Ordner setzen
-
 chdir(__DIR__);
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require_once "config.php";
 require_once "extract.php";
@@ -23,65 +24,82 @@ $cities = [
     ["name" => "Zürich",     "lat" => 47.38, "lon" => 8.54],
 ];
 
-echo "Debug: load.php\n\n";
+$daysToFetch = (isset($_GET['mode']) && $_GET['mode'] === 'full') ? 14 : 1;
 
-// SCHRITT 1: ALTE DATEN LÖSCHEN (Clean Slate)
-// echo "Lösche alte Daten (TRUNCATE)... ";
-// if ($conn->query("TRUNCATE TABLE air_quality")) {
-//     echo "OK.\n\n";
-// } else {
-//     die("Fehler beim Leeren der Tabelle: " . $conn->error);
-// }
+echo "=== START ETL PROZESS (" . date('Y-m-d H:i:s') . ") ===\n";
+echo "Modus: " . ($daysToFetch == 1 ? "Update (1 Tag)" : "Full Init (14 Tage)") . "\n\n";
 
-$ok  = 0;
-$err = 0;
+$sql = "INSERT IGNORE INTO air_quality
+        (time, latitude, longitude, european_aqi, pm10, pm2_5, ozone, birch_pollen, grass_pollen)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    die("CRITICAL ERROR: Prepare failed: " . $conn->error);
+}
+
+$totalInserted = 0;
+$totalErrors = 0;
 
 foreach ($cities as $city) {
-    $lat = $city["lat"];
-    $lon = $city["lon"];
+    $name = $city["name"];
+    $lat  = $city["lat"];
+    $lon  = $city["lon"];
 
-    echo "== " . $city["name"] . " ==\n";
+    echo "Verarbeite $name... ";
 
-    // Holt jetzt 14 Tage Historie (dank extract.php Änderung)
-    $apiData = extractData($lat, $lon);
+    $apiData = extractData($lat, $lon, $daysToFetch);
     
     if ($apiData === null) {
-        echo "   API-Fehler.\n";
-        $err++;
+        echo "[FEHLER] API lieferte keine Daten.\n";
+        $totalErrors++;
         continue;
     }
 
     $rows = transformData($apiData, $lat, $lon);
-    echo "   Datensätze: " . count($rows) . "\n";
+    
+    if (empty($rows)) {
+        echo "[INFO] Keine neuen Datenzeilen generiert.\n";
+        continue;
+    }
+
+    $conn->begin_transaction();
+    $citySuccess = 0;
 
     foreach ($rows as $r) {
-        $time  = $conn->real_escape_string($r["time"]);
-        $latDB = (float)$r["latitude"];
-        $lonDB = (float)$r["longitude"];
-        $aqi   = is_null($r["european_aqi"]) ? "NULL" : (int)$r["european_aqi"];
-        $pm10  = is_null($r["pm10"])         ? "NULL" : (float)$r["pm10"];
-        $pm2_5 = is_null($r["pm2_5"])        ? "NULL" : (float)$r["pm2_5"];
-        $ozone = is_null($r["ozone"])        ? "NULL" : (float)$r["ozone"];
-        $birch = is_null($r["birch_pollen"]) ? "NULL" : (int)$r["birch_pollen"];
-        $grass = is_null($r["grass_pollen"]) ? "NULL" : (int)$r["grass_pollen"];
+        $stmt->bind_param("sddddddii", 
+            $r["time"], 
+            $r["latitude"], 
+            $r["longitude"], 
+            $r["european_aqi"], 
+            $r["pm10"], 
+            $r["pm2_5"], 
+            $r["ozone"], 
+            $r["birch_pollen"], 
+            $r["grass_pollen"]
+        );
 
-        // INSERT IGNORE verhindert Abbruch bei Duplikaten (zur Sicherheit)
-        $sql = "INSERT IGNORE INTO air_quality
-                (time, latitude, longitude, european_aqi, pm10, pm2_5, ozone, birch_pollen, grass_pollen)
-                VALUES ('$time', $latDB, $lonDB, $aqi, $pm10, $pm2_5, $ozone, $birch, $grass)";
-
-        if ($conn->query($sql)) {
-            $ok++;
+        if ($stmt->execute()) {
+            if ($stmt->affected_rows > 0) {
+                $citySuccess++;
+            }
         } else {
-            $err++;
-            // Optional: Fehlerausgabe aktivieren falls nötig
-            // echo "Fehler: " . $conn->error . "\n";
+            echo "\n   SQL Error: " . $stmt->error;
+            $totalErrors++;
         }
     }
-    echo "   Importiert.\n\n";
+
+    $conn->commit();
+    $totalInserted += $citySuccess;
+    echo "OK ($citySuccess neu eingefügt).\n";
+    usleep(200000); 
 }
 
-echo "FERTIG.\n";
-echo "Erfolgreich: $ok\n";
-echo "Fehler: $err\n";
+$stmt->close();
+$conn->close();
+
+echo "\n=== ETL ABSCHLUSS ===\n";
+echo "Gesamt eingefügt: $totalInserted\n";
+echo "Fehler aufgetreten: $totalErrors\n";
 ?>
